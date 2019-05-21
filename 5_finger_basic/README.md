@@ -1,1 +1,1 @@
-# basic source to control 5 sensors and actuators by serial comm.
+# basic code to control 5 sensors and actuators by serial comm.

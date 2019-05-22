@@ -94,7 +94,7 @@ void setup() {
   }
 
   display.clearDisplay();
-  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextSize(3);      // Normal 1:1 pixel scale
   display.setTextColor(WHITE); // Draw white text
   display.setCursor(0, 0);     // Start at top-left corner
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
@@ -230,13 +230,13 @@ void latency_check() {
     float latency_f = (float) latency_sum / 50;
     display.clearDisplay();
     display.setCursor(0,0);
-    display.print("latency: ");
+    //display.print("latency: ");
     if (latency < 10) {
       display.print(" ");
       display.print(latency_f);
     }
     else        display.print(latency_f);
-    display.println(" ms");
+    //display.println(" ms");
     display.display();
     latency_cnt = 0;
     latency_sum = 0;

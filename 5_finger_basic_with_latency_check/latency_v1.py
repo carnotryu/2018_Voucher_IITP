@@ -11,13 +11,13 @@ if ser.isOpen():
 loop_active = True
 data_receive = True
 
-temp = [255, 0, 0, 0, 0, 0, 254]
-pos = [255, 0, 0, 0, 0, 0, 254]
+temp = [255, 0, 0, 0, 0, 0, 0, 254]
+pos = [255, 0, 0, 0, 0, 0, 200, 254]
 factor = 1
 
 def init_fsr():
     lb0.configure(text="Calibrating...")
-    ser.write(bytearray([255,0,0,0,0,0,253]))       # start calibration
+    ser.write(bytearray([255,0,0,0,0,0,0,253]))       # start calibration
 
 def ser_write():
     global temp, pos, factor
@@ -42,24 +42,26 @@ class Upd(threading.Thread):
         self.start()
 
     def run(self):
-        global loop_active, temp
+        global loop_active, temp, pos
         while loop_active:
             if data_receive:
                 x = ser.readline()
-                if len(x) == 8:
-                    if (x[0] == 0xff) & (x[6] == 0xfe):
+                if len(x) == 9:
+                    if (x[0] == 0xff) & (x[7] == 0xfe):
                         lb1.configure(text=int(x[1]))
                         lb2.configure(text=int(x[2]))
                         lb3.configure(text=int(x[3]))
                         lb4.configure(text=int(x[4]))
                         lb5.configure(text=int(x[5]))
+                        lb12.configure(text=int(x[6]))
                         for i in range(1, 6, 1):
                             temp[i] = int(x[i])
+                        pos[6] = int(x[6])
                         ser_write()
-                    elif (x[0] == 0xff) & (x[6] == 0xfd):       # receive when calibration terminated
+                    elif (x[0] == 0xff) & (x[7] == 0xfd):       # receive when calibration terminated
                         lb0.configure(text='Calibrated!')
 
-        ser.write(bytearray([255, 0, 0, 0, 0, 0, 252]))     # stop motor
+        ser.write(bytearray([255, 0, 0, 0, 0, 0, 0, 252]))     # stop motor
         ser.close()
         self.root.quit()
         self.root.update()
@@ -96,6 +98,7 @@ lb8 = Label(win, text="0")
 lb9 = Label(win, text="0")
 lb10 = Label(win, text="0")
 lb11 = Label(win, text=factor)
+lb12 = Label(win, text="0")
 
 upd = Upd(win)
 
@@ -110,6 +113,7 @@ lb7.pack()
 lb8.pack()
 lb9.pack()
 lb10.pack()
+lb12.pack()
 
 bt3 = Button(win, text = '+', command = high)
 bt4 = Button(win, text = '-', command = low)

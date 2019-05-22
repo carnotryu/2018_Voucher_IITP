@@ -9,24 +9,19 @@
 #define OLED_RESET     36 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-#define NUMFLAKES     10 // Number of snowflakes in the animation example
-
-#define LOGO_HEIGHT   16
-#define LOGO_WIDTH    16
-
 int mod = 5;
 float fsr[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 float pos[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 byte i2cAddress[] = {0x06, 0x07, 0x08, 0x09, 0x10};
 short fsr_raw[5], fsr_mm[5], fsr_raw_f[5];
-byte fsr_tx[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
+byte fsr_tx[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
 short fsr_min[] = {300, 300, 300, 300, 300};
 short fsr_max[] = {1000, 1000, 800, 700, 1000};
 short fsr_range[] = {700, 700, 500, 400, 700};
 int pos_raw[5], pos_mm[5];
 int pos_min[] = {40, 40, 40, 40, 60};
 int pos_max[] = {400, 400, 400, 400, 400};
-byte pos_received[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
+byte pos_received[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
 float pos_des[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 int bData = 0;
 int init_flag = 0;
@@ -35,6 +30,9 @@ unsigned long latency = 0;
 unsigned long prev_t = 0;
 int latency_cnt = 0;
 int latency_sum = 0;
+byte send_packet = 0x00;
+byte rec_packet = 0xff;
+int send_cnt;
 
 float max_force = 0.5;
 
@@ -87,7 +85,9 @@ void setup() {
   digitalWrite(EI1,LOW);
   digitalWrite(EI2,LOW);
   digitalWrite(PE,LOW);
-/*
+
+  init_fsr();
+
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
@@ -100,8 +100,6 @@ void setup() {
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
   display.println(latency);
   display.display();
-*/
-  init_fsr();
 
 }
 
@@ -124,43 +122,47 @@ void init_fsr() {
     fsr_max[i] = fsr_min[i] + fsr_range[i];
     fsr_raw_f[i] = readDataFromSensor(i2cAddress[i]);
   }
-  byte cal_complete[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfd};
-  Serial.write(cal_complete,7);
+  byte cal_complete[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfd};
+  Serial.write(cal_complete,8);
   Serial.write("\n");
   init_flag = 0;
+  received = 1;
 }
 
 void loop() {
-  if (received == 1)    prev_t = millis();
-  for (int i = 0; i < 5; i++) {
-    fsr_raw[i] = readDataFromSensor(i2cAddress[i]);
-    fsr_raw_f[i] = 0.8000 * fsr_raw_f[i] + 0.2000 * fsr_raw[i];
-    pos_raw[i] = analogRead(i+1);
-    fsr_mm[i] = fsr_raw_f[i];
-    pos_mm[i] = pos_raw[i];
-    if (fsr_mm[i] < fsr_min[i])       fsr_mm[i] = fsr_min[i];
-    else if (fsr_mm[i] > fsr_max[i])  fsr_mm[i] = fsr_max[i];
-    if (pos_mm[i] < pos_min[i])       pos_mm[i] = pos_min[i];
-    else if (pos_mm[i] > pos_max[i])  pos_mm[i] = pos_max[i];
-    pos[i] = ((float)pos_mm[i] - pos_min[i]) / (pos_max[i] - pos_min[i]) * 10.0;  // position in mm ( 0 - 10.0 )
-  }
-
-  for (int i = 0; i < 5; i++)
-  {
-    fsr_tx[i+1] = (byte)map(fsr_mm[i], fsr_min[i], fsr_max[i], 0x00, 0xfa);
-  }
 
   if (init_flag == 0) {
-    if (received == 1)
-    {
+  
+    if (received == 1) {
+      prev_t = millis();
       received = 0;
-      Serial.write(fsr_tx,7);
-      Serial.print("\n");    
     }
+    for (int i = 0; i < 5; i++) {
+      fsr_raw[i] = readDataFromSensor(i2cAddress[i]);
+      fsr_raw_f[i] = 0.8000 * fsr_raw_f[i] + 0.2000 * fsr_raw[i];
+      pos_raw[i] = analogRead(i+1);
+      fsr_mm[i] = fsr_raw_f[i];
+      pos_mm[i] = pos_raw[i];
+      if (fsr_mm[i] < fsr_min[i])       fsr_mm[i] = fsr_min[i];
+      else if (fsr_mm[i] > fsr_max[i])  fsr_mm[i] = fsr_max[i];
+      if (pos_mm[i] < pos_min[i])       pos_mm[i] = pos_min[i];
+      else if (pos_mm[i] > pos_max[i])  pos_mm[i] = pos_max[i];
+      pos[i] = ((float)pos_mm[i] - pos_min[i]) / (pos_max[i] - pos_min[i]) * 10.0;  // position in mm ( 0 - 10.0 )
+  
+    }
+  
+    for (int i = 0; i < 5; i++)
+    {
+      fsr_tx[i+1] = (byte)map(fsr_mm[i], fsr_min[i], fsr_max[i], 0x00, 0xfa);
+    }
+
+    Serial.write(fsr_tx,8);
+    Serial.print("\n");
+    
+      if ( (pos_raw[0] > 450) || (pos_raw[1] > 450) || (pos_raw[2] > 450) || (pos_raw[3] > 450) || (pos_raw[4] > 450) )    motor_stop();
+
   }
-
-  if ( (pos_raw[0] > 450) || (pos_raw[1] > 450) || (pos_raw[2] > 450) || (pos_raw[3] > 450) || (pos_raw[4] > 450) )    motor_stop();
-
+  
   delayMicroseconds(500);
 }
 
@@ -190,12 +192,20 @@ void serialEvent() {
       pos_received[5] = inData;
       bData = 6;
     }
-    else if ( bData == 6 ) {
+    else if ( (bData == 6) ) {
+      bData = 7;
+      rec_packet = inData;
+    }
+    else if ( bData == 7 ) {
       if ( inData == 0xfe ) {
         motor_cont(pos_received);
-        //latency_check();
-        bData = 0;
+        
+        fsr_tx[6] += 1;
+        if (fsr_tx[6] == 0xff)  fsr_tx[6] = 0x00;
+        latency_check();
         received = 1;
+
+        bData = 0;
       }
       else if ( inData == 0xfd) {
         init_flag = 1;
@@ -206,7 +216,7 @@ void serialEvent() {
         motor_stop();
         bData = 0;
       }
-      else    bData = 0;
+      else  bData = 0;
     }
   }
 }
@@ -217,19 +227,20 @@ void latency_check() {
   latency_sum += latency;
   if (latency_cnt == 50) {
     latency = (unsigned long) latency_sum / 50;
+    float latency_f = (float) latency_sum / 50;
     display.clearDisplay();
     display.setCursor(0,0);
     display.print("latency: ");
     if (latency < 10) {
       display.print(" ");
-      display.print(latency);
+      display.print(latency_f);
     }
-    else        display.print(latency);
+    else        display.print(latency_f);
     display.println(" ms");
     display.display();
     latency_cnt = 0;
     latency_sum = 0;
-}  
+  }  
 }
 
 void motor_cont(byte pos_tar[7]) {

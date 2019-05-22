@@ -154,9 +154,9 @@ void loop() {
     if (received == 1)
     {
       received = 0;
+      prev_t = millis();
       Serial.write(fsr_tx,7);
       Serial.print("\n");    
-      prev_t = millis();
     }
   }
 

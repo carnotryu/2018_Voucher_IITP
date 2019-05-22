@@ -193,26 +193,8 @@ void serialEvent() {
     }
     else if ( bData == 6 ) {
       if ( inData == 0xfe ) {
-        latency = millis() - prev_t;
-        latency_cnt++;
-        latency_sum += latency;
-        if (latency_cnt == 50) {
-          latency = (unsigned long) latency_sum / 50;
-          display.clearDisplay();
-          display.setCursor(0,0);
-          display.print("latency: ");
-          if (latency < 10) {
-            display.print(" ");
-            display.print(latency);
-          }
-          else        display.print(latency);
-          display.println(" ms");
-          display.display();
-          latency_cnt = 0;
-          latency_sum = 0;
-        }
-
         motor_cont(pos_received);
+        latency_check();
         bData = 0;
         received = 1;
       }
@@ -228,6 +210,27 @@ void serialEvent() {
       else    bData = 0;
     }
   }
+}
+
+void latency_check() {
+  latency = millis() - prev_t;
+  latency_cnt++;
+  latency_sum += latency;
+  if (latency_cnt == 50) {
+    latency = (unsigned long) latency_sum / 50;
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.print("latency: ");
+    if (latency < 10) {
+      display.print(" ");
+      display.print(latency);
+    }
+    else        display.print(latency);
+    display.println(" ms");
+    display.display();
+    latency_cnt = 0;
+    latency_sum = 0;
+}  
 }
 
 void motor_cont(byte pos_tar[7]) {

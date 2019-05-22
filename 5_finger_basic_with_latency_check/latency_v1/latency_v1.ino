@@ -87,7 +87,7 @@ void setup() {
   digitalWrite(EI1,LOW);
   digitalWrite(EI2,LOW);
   digitalWrite(PE,LOW);
-
+/*
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
@@ -100,7 +100,7 @@ void setup() {
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
   display.println(latency);
   display.display();
-
+*/
   init_fsr();
 
 }
@@ -161,7 +161,6 @@ void loop() {
 
   if ( (pos_raw[0] > 450) || (pos_raw[1] > 450) || (pos_raw[2] > 450) || (pos_raw[3] > 450) || (pos_raw[4] > 450) )    motor_stop();
 
-
   delayMicroseconds(500);
 }
 
@@ -194,7 +193,7 @@ void serialEvent() {
     else if ( bData == 6 ) {
       if ( inData == 0xfe ) {
         motor_cont(pos_received);
-        latency_check();
+        //latency_check();
         bData = 0;
         received = 1;
       }

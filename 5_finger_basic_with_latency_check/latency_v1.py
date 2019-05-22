@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 
 print('Connecting...')
-ser = serial.Serial('COM14', 115200, timeout=1)
+ser = serial.Serial('COM7', 115200, timeout=1)
 if ser.isOpen():
     print('Connected!')
 
@@ -83,7 +83,6 @@ def exitProgram():
 win = Tk()
 win.title("serial_test")
 win.geometry("300x400")
-upd = Upd(win)
 
 lb0 = Label(win, text="Calibrating...")
 lb1 = Label(win, text="0")
@@ -97,6 +96,8 @@ lb8 = Label(win, text="0")
 lb9 = Label(win, text="0")
 lb10 = Label(win, text="0")
 lb11 = Label(win, text=factor)
+
+upd = Upd(win)
 
 lb0.pack()
 lb1.pack()

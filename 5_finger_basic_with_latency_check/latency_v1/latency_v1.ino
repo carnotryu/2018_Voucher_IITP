@@ -131,6 +131,7 @@ void init_fsr() {
 }
 
 void loop() {
+  if (received == 1)    prev_t = millis();
   for (int i = 0; i < 5; i++) {
     fsr_raw[i] = readDataFromSensor(i2cAddress[i]);
     fsr_raw_f[i] = 0.8000 * fsr_raw_f[i] + 0.2000 * fsr_raw[i];
@@ -142,7 +143,6 @@ void loop() {
     if (pos_mm[i] < pos_min[i])       pos_mm[i] = pos_min[i];
     else if (pos_mm[i] > pos_max[i])  pos_mm[i] = pos_max[i];
     pos[i] = ((float)pos_mm[i] - pos_min[i]) / (pos_max[i] - pos_min[i]) * 10.0;  // position in mm ( 0 - 10.0 )
-
   }
 
   for (int i = 0; i < 5; i++)
@@ -154,7 +154,6 @@ void loop() {
     if (received == 1)
     {
       received = 0;
-      prev_t = millis();
       Serial.write(fsr_tx,7);
       Serial.print("\n");    
     }
@@ -197,7 +196,7 @@ void serialEvent() {
         latency = millis() - prev_t;
         latency_cnt++;
         latency_sum += latency;
-        if (latency_cnt == 10) {
+        if (latency_cnt == 50) {
           latency = (unsigned long) latency_sum / 10;
           display.clearDisplay();
           display.setCursor(0,0);

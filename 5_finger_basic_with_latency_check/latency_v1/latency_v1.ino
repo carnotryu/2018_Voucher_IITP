@@ -197,7 +197,7 @@ void serialEvent() {
         latency_cnt++;
         latency_sum += latency;
         if (latency_cnt == 50) {
-          latency = (unsigned long) latency_sum / 10;
+          latency = (unsigned long) latency_sum / 50;
           display.clearDisplay();
           display.setCursor(0,0);
           display.print("latency: ");

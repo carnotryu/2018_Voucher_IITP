@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 
 print('Connecting...')
-ser = serial.Serial('COM7', 115200, timeout=1)
+ser = serial.Serial('COM13', 115200, timeout=1)
 if ser.isOpen():
     print('Connected!')
 
@@ -14,6 +14,23 @@ data_receive = True
 temp = [255, 0, 0, 0, 0, 0, 254]
 pos = [255, 0, 0, 0, 0, 0, 254]
 factor = 1
+
+win = Tk()
+win.title("serial_test")
+win.geometry("300x400")
+
+lb0 = Label(win, text="Calibration Needed..")
+lb1 = Label(win, text="0")
+lb2 = Label(win, text="0")
+lb3 = Label(win, text="0")
+lb4 = Label(win, text="0")
+lb5 = Label(win, text="0")
+lb6 = Label(win, text="0")
+lb7 = Label(win, text="0")
+lb8 = Label(win, text="0")
+lb9 = Label(win, text="0")
+lb10 = Label(win, text="0")
+lb11 = Label(win, text=factor)
 
 def init_fsr():
     lb0.configure(text="Calibrating...")
@@ -80,23 +97,7 @@ def exitProgram():
     global loop_active
     loop_active = False
 
-win = Tk()
-win.title("serial_test")
-win.geometry("300x400")
 upd = Upd(win)
-
-lb0 = Label(win, text="Calibrating...")
-lb1 = Label(win, text="0")
-lb2 = Label(win, text="0")
-lb3 = Label(win, text="0")
-lb4 = Label(win, text="0")
-lb5 = Label(win, text="0")
-lb6 = Label(win, text="0")
-lb7 = Label(win, text="0")
-lb8 = Label(win, text="0")
-lb9 = Label(win, text="0")
-lb10 = Label(win, text="0")
-lb11 = Label(win, text=factor)
 
 lb0.pack()
 lb1.pack()

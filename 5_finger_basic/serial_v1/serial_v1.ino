@@ -15,7 +15,7 @@ int pos_max[] = {400, 400, 400, 400, 400};
 byte pos_received[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
 float pos_des[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 int bData = 0;
-int init_flag = 0;
+int init_flag = 1;
 
 float max_force = 0.5;
 
@@ -69,7 +69,7 @@ void setup() {
   digitalWrite(EI2,LOW);
   digitalWrite(PE,LOW);
 
-  init_fsr();
+  //init_fsr();
 
 }
 
@@ -99,33 +99,36 @@ void init_fsr() {
 }
 
 void loop() {
-  for (int i = 0; i < 5; i++) {
-    fsr_raw[i] = readDataFromSensor(i2cAddress[i]);
-    fsr_raw_f[i] = 0.8000 * fsr_raw_f[i] + 0.2000 * fsr_raw[i];
-    pos_raw[i] = analogRead(i+1);
-    fsr_mm[i] = fsr_raw_f[i];
-    pos_mm[i] = pos_raw[i];
-    if (fsr_mm[i] < fsr_min[i])       fsr_mm[i] = fsr_min[i];
-    else if (fsr_mm[i] > fsr_max[i])  fsr_mm[i] = fsr_max[i];
-    if (pos_mm[i] < pos_min[i])       pos_mm[i] = pos_min[i];
-    else if (pos_mm[i] > pos_max[i])  pos_mm[i] = pos_max[i];
-    pos[i] = ((float)pos_mm[i] - pos_min[i]) / (pos_max[i] - pos_min[i]) * 10.0;  // position in mm ( 0 - 10.0 )
-
-  }
-
-  for (int i = 0; i < 5; i++)
-  {
-    fsr_tx[i+1] = (byte)map(fsr_mm[i], fsr_min[i], fsr_max[i], 0x00, 0xfa);
-  }
-
   if (init_flag == 0) {
-    Serial.write(fsr_tx,7);
-    Serial.print("\n");    
+    for (int i = 0; i < 5; i++) {
+      fsr_raw[i] = readDataFromSensor(i2cAddress[i]);
+      fsr_raw_f[i] = 0.8000 * fsr_raw_f[i] + 0.2000 * fsr_raw[i];
+      pos_raw[i] = analogRead(i+1);
+      fsr_mm[i] = fsr_raw_f[i];
+      pos_mm[i] = pos_raw[i];
+      if (fsr_mm[i] < fsr_min[i])       fsr_mm[i] = fsr_min[i];
+      else if (fsr_mm[i] > fsr_max[i])  fsr_mm[i] = fsr_max[i];
+      if (pos_mm[i] < pos_min[i])       pos_mm[i] = pos_min[i];
+      else if (pos_mm[i] > pos_max[i])  pos_mm[i] = pos_max[i];
+      pos[i] = ((float)pos_mm[i] - pos_min[i]) / (pos_max[i] - pos_min[i]) * 10.0;  // position in mm ( 0 - 10.0 )
+  
+    }
+  
+    for (int i = 0; i < 5; i++)
+    {
+      fsr_tx[i+1] = (byte)map(fsr_mm[i], fsr_min[i], fsr_max[i], 0x00, 0xfa);
+    }
+  
+    if (init_flag == 0) {
+      Serial.write(fsr_tx,7);
+      Serial.print("\n");    
+    }
+  
+    if ( (pos_raw[0] > 450) || (pos_raw[1] > 450) || (pos_raw[2] > 450) || (pos_raw[3] > 450) || (pos_raw[4] > 450) )    motor_stop();
+  
+    delayMicroseconds(500);    
   }
 
-  if ( (pos_raw[0] > 450) || (pos_raw[1] > 450) || (pos_raw[2] > 450) || (pos_raw[3] > 450) || (pos_raw[4] > 450) )    motor_stop();
-
-  delayMicroseconds(500);
 }
 
 void serialEvent() {

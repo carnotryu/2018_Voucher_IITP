@@ -6,9 +6,9 @@ int moving = 0;
 
 float max_force = 0.5;
 
-int AI1 =   23;
-int AI2 =   25;
-int PA =    2;
+int AI1 =   39;
+int AI2 =   41;
+int PA =    6;
 
 void setup() {
   Serial.begin(9600);
@@ -18,12 +18,11 @@ void setup() {
   digitalWrite(AI1,LOW);
   digitalWrite(AI2,LOW);
   digitalWrite(PA,LOW);
-  
 }
 
 void loop() {
   
-  pos1_raw = analogRead(A1);
+  pos1_raw = analogRead(A5);
 
   pos1_mm = pos1_raw;
 
@@ -65,7 +64,7 @@ void loop() {
   Serial.print("\t");
   Serial.println(duty);
 
-  if (moving == 2 && pos1_mm < 600)
+  if (moving == 2 && pos1_mm < 550)
   {
     dir = 2;
   }

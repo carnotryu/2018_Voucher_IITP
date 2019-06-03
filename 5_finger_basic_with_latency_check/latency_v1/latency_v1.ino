@@ -24,7 +24,7 @@ int pos_max[] = {400, 400, 400, 400, 400};
 byte pos_received[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
 float pos_des[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 int bData = 0;
-int init_flag = 0;
+int init_flag = 1;
 int received = 1;
 unsigned long latency = 0;
 unsigned long prev_t = 0;
@@ -86,7 +86,7 @@ void setup() {
   digitalWrite(EI2,LOW);
   digitalWrite(PE,LOW);
 
-  init_fsr();
+  //init_fsr();
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
     Serial.println(F("SSD1306 allocation failed"));

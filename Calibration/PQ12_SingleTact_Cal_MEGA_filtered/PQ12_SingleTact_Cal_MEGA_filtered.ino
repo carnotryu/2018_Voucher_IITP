@@ -14,9 +14,9 @@ float pos1_des;
 float max_force = 1.0;
 float stop_pos1 = 1.0;
 
-int AI1 =   23;
-int AI2 =   25;
-int PA =    2;
+int AI1 =   39;
+int AI2 =   41;
+int PA =    6;
 
 int cnt = 0;
 bool led1 = 0, led2 = 1;
@@ -52,7 +52,7 @@ void loop() {
   //fsr1_raw_f = 0.945 * fsr1_raw_f + 0.0549 * fsr1_raw;
   fsr1_raw_f = 0.800 * fsr1_raw_f + 0.200 * fsr1_raw;
 
-  pos1_raw = analogRead(A1);
+  pos1_raw = analogRead(A5);
 
   fsr1_mm = fsr1_raw_f;
   pos1_mm = pos1_raw;
@@ -109,7 +109,7 @@ void loop() {
   Serial.print(pos1_des);
   Serial.print("\n");
 
-  //pcont1(pos1_des);
+  pcont1(pos1_des);
 }
 
 void pcont1(float p_tar1) {

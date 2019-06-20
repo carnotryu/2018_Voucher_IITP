@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 
 print('Connecting...')
-ser = serial.Serial('COM11', 38400, timeout=1)
+ser = serial.Serial('COM9', 38400, timeout=1)
 if ser.isOpen():
     print('Connected!')
 

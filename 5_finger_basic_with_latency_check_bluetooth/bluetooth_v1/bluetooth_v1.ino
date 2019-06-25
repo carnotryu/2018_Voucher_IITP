@@ -84,7 +84,7 @@ void init_fsr() {
 
 void setup() {
   Wire.begin();
-  Serial1.begin(9600);
+  Serial1.begin(38400);
   pinMode(13, OUTPUT);
   pinMode(AI1,OUTPUT);
   pinMode(AI2,OUTPUT);

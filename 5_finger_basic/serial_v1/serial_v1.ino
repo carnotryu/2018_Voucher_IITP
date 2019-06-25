@@ -37,7 +37,7 @@ int PE =    6;
 
 void setup() {
   Wire.begin();
-  Serial.begin(38400);
+  Serial.begin(115200);
   pinMode(AI1,OUTPUT);
   pinMode(AI2,OUTPUT);
   pinMode(PA,OUTPUT);

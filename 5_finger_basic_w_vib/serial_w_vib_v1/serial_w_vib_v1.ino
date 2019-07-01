@@ -230,7 +230,7 @@ void motor_cont(byte pos_tar[8]) {
   pcont4(pos_des[3]);
   pcont5(pos_des[4]);
   if (int(pos_tar[6]) != vib_int_prev)   analogWrite(VIB, int(pos_tar[6]));
-  vib_int_prev = pos_tar[6];
+  vib_int_prev = int(pos_tar[6]);
 }
 
 void motor_stop() {

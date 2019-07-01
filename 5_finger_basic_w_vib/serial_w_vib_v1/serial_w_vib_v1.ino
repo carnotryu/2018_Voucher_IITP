@@ -229,7 +229,7 @@ void motor_cont(byte pos_tar[8]) {
   pcont3(pos_des[2]);
   pcont4(pos_des[3]);
   pcont5(pos_des[4]);
-  if (pos_tar[6] != vib_int_prev)   analogWrite(VIB, int(pos_tar[6]));
+  if (int(pos_tar[6]) != vib_int_prev)   analogWrite(VIB, int(pos_tar[6]));
   vib_int_prev = pos_tar[6];
 }
 

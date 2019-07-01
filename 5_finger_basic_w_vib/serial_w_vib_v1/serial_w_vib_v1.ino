@@ -26,6 +26,7 @@ byte pos_received[] = {0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
 float pos_des[] = {0.0, 0.0, 0.0, 0.0, 0.0};
 int bData = 0;
 int init_flag = 1;
+int vib_int_prev = 0;
 
 float max_force = 0.5;
 
@@ -228,7 +229,8 @@ void motor_cont(byte pos_tar[8]) {
   pcont3(pos_des[2]);
   pcont4(pos_des[3]);
   pcont5(pos_des[4]);
-  analogWrite(VIB, int(pos_tar[6]));
+  if (pos_tar[6] != vib_int_prev)   analogWrite(VIB, int(pos_tar[6]));
+  vib_int_prev = pos_tar[6];
 }
 
 void motor_stop() {

@@ -68,6 +68,10 @@ void loop() {
   {
     dir = 2;
   }
+  if (moving == 1 && pos1_mm > 799)
+  {
+    dir = 2;
+  }
   motor_con1(dir, duty);
 
   delay(20);

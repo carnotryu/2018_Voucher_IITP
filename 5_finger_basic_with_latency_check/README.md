@@ -1,0 +1,1 @@
+added latency check func.

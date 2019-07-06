@@ -16,7 +16,7 @@ float stop_pos1 = 1.0;
 
 int AI1 =   39;
 int AI2 =   41;
-int PA =    6;
+int PA =    6;9
 
 int cnt = 0;
 bool led1 = 0, led2 = 1;

@@ -45,11 +45,11 @@ void loop() {
   }
   else if (m == '3')
   {
-    if (duty > 30)   duty -= 30;
+    if (duty > 30)   duty -= 10;
   }
   else if (m == '4')
   {
-    if (duty < 250) duty += 30;
+    if (duty < 250) duty += 10;
   }
   else if (m == '5')
   {
@@ -64,7 +64,7 @@ void loop() {
   Serial.print("\t");
   Serial.println(duty);
 
-  if (moving == 2 && pos1_mm < 550)
+  if (moving == 2 && pos1_mm < 650)
   {
     dir = 2;
   }

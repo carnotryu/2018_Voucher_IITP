@@ -65,7 +65,7 @@ void loop() {
   Serial.println(duty);
 
   if (moving == 2 && pos1_mm < 650)
-  {
+  { 
     dir = 2;
   }
   if (moving == 1 && pos1_mm > 799)
